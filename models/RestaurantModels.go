@@ -8,19 +8,14 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-// signup
-type Users struct {
+type RestaurantList struct {
 	Id         primitive.ObjectID `json:"id,omitempty"`
 	Name       string             `json:"name,omitempty" validate:"required"`
-	Email      string             `json:"email,omitempty" validate:"required"`
-	Password   string             `json:"password,omitempty" validate:"required"`
+	Contact    string             `json:"contact,omitempty" validate:"required"`
+	Address    string             `json:"address,omitempty" validate:"required"`
 	CreatedAt  time.Time          `bson:"created_at" json:"createdAt,omitempty"`
 	ModifiedAt time.Time          `bson:"modifiedAt" json:"modifiedAt,omitempty"`
 	DeletedAt  time.Time          `bson:"deletedAt,omitempty" json:"deletedAt,omitempty"`
 }
 
-var UserCollection *mongo.Collection = configs.GetCollection(configs.DB, "registers")
-
-// func CreateUser(ctx context.Context, newUser Users) Users, error {
-// 	result, error := UserCollection.InsertOne(ctx, newUser)
-// }
+var RestaurantCollection *mongo.Collection = configs.GetCollection(configs.DB, "restaurantlists")

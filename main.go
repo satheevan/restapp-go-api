@@ -10,6 +10,7 @@ import (
 
 	// Folder
 	// "github.com/pulsarcoder/Projects/restaurantgo/configs"
+	"github.com/pulsarcoder/Projects/restaurantgo/configs"
 	"github.com/pulsarcoder/Projects/restaurantgo/routes"
 )
 
@@ -17,9 +18,10 @@ func main() {
 	router := mux.NewRouter()
 
 	routes.UserRoute(router)
+	routes.RestaurantRoute(router)
 
 	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:8080"},
+		AllowedOrigins:   []string{configs.EnvFrontEndURI()},
 		AllowCredentials: true,
 	})
 	handler := c.Handler(router)
