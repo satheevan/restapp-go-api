@@ -48,9 +48,14 @@ func (uc UserController) UserCreate() http.HandlerFunc {
 		//validate the request body(bodyparser)
 
 		if validationErr := validate.Struct(&user); validationErr != nil {
+			errors := []string{}
+			validationErrors := validationErr.(validator.ValidationErrors)
+			for _, validationError := range validationErrors {
+				errors = append(errors, validationError.Error())
+			}
 			rw.WriteHeader(http.StatusBadRequest)
 			res := responses.UserResponse{Status: http.StatusBadRequest, Message: "Invalid data", Data: map[string]interface{}{
-				"data": validationErr.Error()}}
+				"data": errors}}
 			json.NewEncoder(rw).Encode(res)
 			return
 		}
