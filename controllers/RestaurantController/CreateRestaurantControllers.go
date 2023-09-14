@@ -12,6 +12,7 @@ import (
 	"github.com/pulsarcoder/Projects/restaurantgo/models"
 	"github.com/pulsarcoder/Projects/restaurantgo/requests"
 	"github.com/pulsarcoder/Projects/restaurantgo/responses"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func (rc RestaurantController) CreateRestaurants() http.HandlerFunc {
@@ -40,7 +41,7 @@ func (rc RestaurantController) CreateRestaurants() http.HandlerFunc {
 			CreatedAt: time.Now(),
 		}
 		//store in database
-		_, err := newRestaurant.CreateRestaurantModel(ctx)
+		newRestaurantResult, err := newRestaurant.CreateRestaurantModel(ctx)
 		if err != nil {
 			fmt.Print("Error in database and the value not saved in mongodb", err.Error())
 			rw.WriteHeader(http.StatusInternalServerError)
@@ -50,6 +51,7 @@ func (rc RestaurantController) CreateRestaurants() http.HandlerFunc {
 			rc.Json(rw, res)
 			return
 		}
+		newRestaurant.Id = newRestaurantResult.InsertedID.(primitive.ObjectID)
 		//result
 		rw.WriteHeader(http.StatusCreated)
 		res := responses.UserResponse{

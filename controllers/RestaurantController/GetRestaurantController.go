@@ -2,6 +2,7 @@ package RestaurantController
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -10,6 +11,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/pulsarcoder/Projects/restaurantgo/common"
 	"github.com/pulsarcoder/Projects/restaurantgo/models"
+	"github.com/pulsarcoder/Projects/restaurantgo/requests"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -57,19 +59,56 @@ func (rc RestaurantController) GetOneRestaurants() http.HandlerFunc {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 
 		// create
+		var userpayload = requests.RestaurantCreateRequest{}
+
+		var restaurant = new(models.RestaurantList)
+
+		//getting the Query parameter
+		// routeParams := mux.Vars(r)
+		// RestaurantId := routeParams["Id"]
+
+		defer cancel()
+		// bodyrequest
+		if err := json.NewDecoder(r.Body).Decode(&userpayload); err != nil {
+			fmt.Println("GetRestaurantController.GetOneRestaurants: Error in Unmarshalling request body")
+			rc.Status400(rw)
+			res := rc.Responses(http.StatusBadRequest, "Invalid username or password", common.DataMap{"error": err.Error()})
+			rc.Json(rw, res)
+			return
+		}
+
+		ObjectId, _ := primitive.ObjectIDFromHex(userpayload.Id)
+		if err := models.RestaurantCollection.FindOne(ctx, bson.M{"_id": ObjectId}).Decode(&restaurant); err != nil {
+			fmt.Println("Restaurantcontroller : GetRestaurantController: GetOneRestaurants=> Error in Getting the data from database", err)
+			res := rc.Responses(http.StatusInternalServerError, "Error in data receives", common.DataMap{"Error": err.Error()})
+			rc.Json(rw, res)
+			return
+		}
+		rw.WriteHeader(http.StatusOK)
+		res := rc.Responses(http.StatusOK, "successfully getting", common.DataMap{"data": restaurant})
+		rc.Json(rw, res)
+	}
+}
+
+func (rc RestaurantController) GetOneRestaurantsParams() http.HandlerFunc {
+	return func(rw http.ResponseWriter, r *http.Request) {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+
+		// create
 		var restaurant = new(models.RestaurantList)
 
 		//getting the Query parameter
 		routeParams := mux.Vars(r)
-		RestaurantId := routeParams["Id"]
+		RestaurantId := routeParams["id"]
 
 		defer cancel()
 
 		ObjectId, _ := primitive.ObjectIDFromHex(RestaurantId)
-		if err := models.RestaurantCollection.FindOne(ctx, bson.M{"Id": ObjectId}).Decode(&restaurant); err != nil {
-			fmt.Println("Restaurantcontroller : GetRestaurantController: GetOneRestaurants=> Error in Getting the data from database")
+		if err := models.RestaurantCollection.FindOne(ctx, bson.M{"_id": ObjectId}).Decode(&restaurant); err != nil {
+			fmt.Println("Restaurantcontroller : GetRestaurantController: GetOneRestaurantsParams=> Error in Getting the data from database", err)
 			res := rc.Responses(http.StatusInternalServerError, "Error in data receives", common.DataMap{"Error": err.Error()})
 			rc.Json(rw, res)
+			return
 		}
 		rw.WriteHeader(http.StatusOK)
 		res := rc.Responses(http.StatusOK, "successfully getting", common.DataMap{"data": restaurant})

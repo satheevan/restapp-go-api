@@ -12,7 +12,7 @@ func UserRoute(app *mux.Router) {
 	// Just for Testing
 	app.HandleFunc("/", configs.Testrusnning()).Methods("GET")
 	app.HandleFunc("/restaurant", (&RestaurantController.RestaurantController{}).Index()).Methods("GET")
-	// SignUp ***/
+	// SignUp ***/  
 	// HandleFunc registers a new route with a matcher for the URL path. See Route.Path() and Route.HandlerFunc().@@
 	// Create
 	app.HandleFunc("/user-create", (&controllers.UserController{}).UserCreate()).Methods("POST")
@@ -27,5 +27,8 @@ func RestaurantRoute(app *mux.Router) {
 	app.HandleFunc("/restaurant-create", (&RestaurantController.RestaurantController{}).CreateRestaurants()).Methods("Post")
 
 	app.HandleFunc("/restaurant-list", (&RestaurantController.RestaurantController{}).GetAllRestaurants()).Methods("Get")
-	app.HandleFunc("/restaurant-getonedata/{id}", (&RestaurantController.RestaurantController{}).UpdateOneRestaurants()).Methods("Get")
+	app.HandleFunc("/restaurant-getonedata/{id}", (&RestaurantController.RestaurantController{}).GetOneRestaurantsParams()).Methods("Get")
+	app.HandleFunc("/restaurant-getonedata", (&RestaurantController.RestaurantController{}).GetOneRestaurants()).Methods("Post")
+	app.HandleFunc("/restaurant-updateonedata/{id}", (&RestaurantController.RestaurantController{}).UpdateOneRestaurants()).Methods("Post")
+	// adhcore in the above code
 }

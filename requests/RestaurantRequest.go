@@ -1,6 +1,7 @@
 package requests
 
 type RestaurantCreateRequest struct {
+	Id      string `json:"id"`
 	Name    string `json:"name,omitempty" validate:"required"`
 	Contact string `json:"contact,omitempty" validate:"required"`
 	Address string `json:"address,omitempty" validate:"required"`

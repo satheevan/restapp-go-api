@@ -9,7 +9,7 @@ import (
 )
 
 type RestaurantList struct {
-	Id         primitive.ObjectID `json:"id,omitempty"`
+	Id         primitive.ObjectID `bson:"_id" json:"id,omitempty"`
 	Name       string             `json:"name,omitempty" validate:"required"`
 	Contact    string             `json:"contact,omitempty" validate:"required"`
 	Address    string             `json:"address,omitempty" validate:"required"`
